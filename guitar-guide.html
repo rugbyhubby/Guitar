@@ -1,0 +1,1794 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Guitar Guide</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap');
+
+  :root {
+    --bg: #0e0e0e;
+    --surface: #1a1a1a;
+    --surface2: #232323;
+    --border: #2e2e2e;
+    --text: #e8e4dc;
+    --text2: #9a9590;
+    --text3: #5a5550;
+    --accent: #c8763a;
+    --accent2: #e8a060;
+    --blue: #4a8fc0;
+    --green: #5a9a50;
+    --amber: #c8923a;
+    --purple: #8a70c0;
+    --red: #c05050;
+    --I: #c8763a;
+    --IV: #4a8fc0;
+    --V: #5a9a50;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── LAYOUT ── */
+  .app { display: flex; height: 100vh; overflow: hidden; }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: 280px;
+    min-width: 280px;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: transform .3s ease;
+  }
+
+  .sidebar-header {
+    padding: 24px 20px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .sidebar-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    color: var(--accent2);
+    letter-spacing: .5px;
+    margin-bottom: 4px;
+  }
+
+  .sidebar-sub {
+    font-size: 11px;
+    color: var(--text3);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  .sidebar-nav { flex: 1; overflow-y: auto; padding: 12px 0; }
+  .sidebar-nav::-webkit-scrollbar { width: 4px; }
+  .sidebar-nav::-webkit-scrollbar-track { background: transparent; }
+  .sidebar-nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .section-group { margin-bottom: 8px; }
+
+  .section-header {
+    padding: 8px 20px 4px;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text3);
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-left: 3px solid transparent;
+    transition: all .2s;
+    user-select: none;
+  }
+
+  .nav-item:hover { background: var(--surface2); }
+
+  .nav-item.active {
+    background: rgba(200, 118, 58, 0.12);
+    border-left-color: var(--accent);
+  }
+
+  .nav-item.active .nav-label { color: var(--accent2); }
+
+  .nav-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--text3);
+    min-width: 20px;
+  }
+
+  .nav-label {
+    font-size: 13px;
+    color: var(--text2);
+    line-height: 1.3;
+  }
+
+  .nav-tag {
+    margin-left: auto;
+    font-size: 9px;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: 'IBM Plex Mono', monospace;
+    letter-spacing: .5px;
+  }
+
+  .tag-lead { background: rgba(138,112,192,.2); color: var(--purple); }
+  .tag-blues { background: rgba(200,118,58,.2); color: var(--accent); }
+
+  /* ── MAIN ── */
+  .main { flex: 1; overflow-y: auto; overflow-x: hidden; }
+  .main::-webkit-scrollbar { width: 6px; }
+  .main::-webkit-scrollbar-track { background: transparent; }
+  .main::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  .page { display: none; padding: 32px 36px; max-width: 860px; min-height: 100vh; }
+  .page.active { display: block; }
+
+  .page-header { margin-bottom: 28px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
+
+  .page-eyebrow {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text3);
+    font-family: 'IBM Plex Mono', monospace;
+    margin-bottom: 8px;
+  }
+
+  .page-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    color: var(--text);
+    line-height: 1.2;
+    margin-bottom: 8px;
+  }
+
+  .page-desc { color: var(--text2); font-size: 14px; line-height: 1.7; max-width: 580px; }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+
+  .card-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--accent);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .step-list { list-style: none; }
+
+  .step-item {
+    display: flex;
+    gap: 14px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    border-radius: 6px;
+    padding: 10px 8px;
+    transition: background .2s;
+  }
+
+  .step-item:last-child { border-bottom: none; }
+  .step-item:hover { background: var(--surface2); }
+
+  .step-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    min-width: 24px;
+    padding-top: 2px;
+  }
+
+  .step-content { flex: 1; }
+  .step-title { font-size: 14px; color: var(--text); font-weight: 500; margin-bottom: 3px; }
+  .step-desc { font-size: 13px; color: var(--text2); line-height: 1.5; }
+
+  .step-arrow { color: var(--text3); padding-top: 2px; font-size: 16px; }
+
+  /* ── FRETBOARD ── */
+  .fretboard-wrap { overflow-x: auto; padding-bottom: 8px; }
+  .fretboard-wrap svg { min-width: 320px; }
+
+  /* ── CHORD GRID ── */
+  .chord-nav-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+
+  .chord-pill {
+    padding: 8px 18px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--text2);
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all .2s;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  .chord-pill:hover { border-color: var(--accent); color: var(--accent2); }
+  .chord-pill.active { background: rgba(200,118,58,.15); border-color: var(--accent); color: var(--accent2); }
+
+  .chord-display-row { display: flex; gap: 24px; flex-wrap: wrap; align-items: flex-start; }
+
+  .chord-notes-grid { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+
+  .note-pill {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  .np-root { background: rgba(200,118,58,.2); color: var(--accent2); border: 1px solid rgba(200,118,58,.4); }
+  .np-3rd  { background: rgba(74,143,192,.2); color: #7ab8e8; border: 1px solid rgba(74,143,192,.4); }
+  .np-5th  { background: rgba(90,154,80,.2); color: #8acc80; border: 1px solid rgba(90,154,80,.4); }
+  .np-b7   { background: rgba(200,146,58,.2); color: #e8b870; border: 1px solid rgba(200,146,58,.4); }
+
+  .finger-steps { list-style: none; }
+  .finger-steps li {
+    padding: 6px 0;
+    font-size: 13px;
+    color: var(--text2);
+    border-bottom: 1px solid var(--border);
+    line-height: 1.5;
+  }
+  .finger-steps li:last-child { border-bottom: none; }
+
+  .tip-card {
+    background: rgba(200,118,58,.08);
+    border: 1px solid rgba(200,118,58,.25);
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-size: 13px;
+    color: var(--text2);
+    margin-top: 12px;
+    line-height: 1.6;
+  }
+
+  /* ── BLUES GRID ── */
+  .key-var-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; align-items: center; }
+  .kv-label { font-size: 12px; color: var(--text3); font-family: 'IBM Plex Mono', monospace; margin-right: 4px; }
+
+  .kv-btn {
+    padding: 6px 14px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--text2);
+    font-size: 13px;
+    cursor: pointer;
+    transition: all .2s;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  .kv-btn.active { background: rgba(200,118,58,.15); border-color: var(--accent); color: var(--accent2); }
+
+  .blues-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 16px; }
+
+  .bar-cell {
+    border-radius: 8px;
+    padding: 12px 8px 10px;
+    cursor: pointer;
+    position: relative;
+    min-height: 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 1.5px solid transparent;
+    transition: transform .15s, border-color .2s;
+    user-select: none;
+  }
+
+  .bar-cell:active { transform: scale(.97); }
+  .bar-cell.active-bar { border-color: #e8a060 !important; box-shadow: 0 0 0 2px rgba(232,160,96,.2); }
+
+  .bar-I   { background: rgba(200,118,58,.15); border-color: rgba(200,118,58,.3); }
+  .bar-IV  { background: rgba(74,143,192,.15); border-color: rgba(74,143,192,.3); }
+  .bar-V   { background: rgba(90,154,80,.15);  border-color: rgba(90,154,80,.3); }
+
+  .bar-num-label { font-size: 10px; position: absolute; top: 5px; left: 7px; opacity: .45; font-family: 'IBM Plex Mono', monospace; }
+  .bar-chord { font-size: 20px; font-weight: 500; font-family: 'IBM Plex Mono', monospace; }
+  .bar-degree { font-size: 11px; margin-top: 3px; opacity: .6; }
+
+  .blues-info {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    font-size: 13px;
+    color: var(--text2);
+    min-height: 52px;
+    line-height: 1.6;
+  }
+
+  .blues-info strong { color: var(--text); font-weight: 500; }
+
+  .legend-row { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 12px; }
+  .legend-item { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--text2); }
+  .swatch { width: 12px; height: 12px; border-radius: 3px; }
+
+  /* ── INFO BOX ── */
+  .info-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-size: 13px;
+    color: var(--text2);
+    min-height: 44px;
+    margin-top: 12px;
+    line-height: 1.6;
+  }
+  .info-box strong { color: var(--text); font-weight: 500; }
+
+  /* ── SCALE DISPLAY ── */
+  .scale-toggle-row { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+  .sc-btn {
+    padding: 7px 16px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--text2);
+    font-size: 13px;
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .sc-btn.active { background: rgba(138,112,192,.2); border-color: var(--purple); color: #b8a8e8; }
+  .sc-btn.active-blue { background: rgba(74,143,192,.2); border-color: var(--blue); color: #7ab8e8; }
+  .sc-btn.active-green { background: rgba(90,154,80,.2); border-color: var(--green); color: #8acc80; }
+  .sc-btn.active-amber { background: rgba(200,118,58,.2); border-color: var(--accent); color: var(--accent2); }
+
+  /* ── TIPS ── */
+  .tip-row { display: flex; gap: 12px; margin-bottom: 12px; align-items: flex-start; }
+  .tip-icon { font-size: 18px; padding-top: 1px; }
+  .tip-text { font-size: 13px; color: var(--text2); line-height: 1.6; }
+  .tip-text strong { color: var(--text); font-weight: 500; }
+
+  /* ── MOBILE TOGGLE ── */
+  .menu-toggle {
+    display: none;
+    position: fixed;
+    top: 14px;
+    left: 14px;
+    z-index: 100;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 18px;
+    color: var(--text2);
+  }
+
+  .sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.6);
+    z-index: 50;
+  }
+
+  /* ── PROGRESS BAR ── */
+  .progress-bar {
+    height: 2px;
+    background: var(--border);
+    border-radius: 1px;
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 1px;
+    transition: width .4s ease;
+  }
+
+  /* ── HOME PAGE ── */
+  .home-sections { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 8px; }
+  .home-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px;
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .home-card:hover { border-color: var(--accent); transform: translateY(-1px); }
+  .home-card-num { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--text3); margin-bottom: 6px; }
+  .home-card-title { font-family: 'Playfair Display', serif; font-size: 17px; color: var(--text); margin-bottom: 6px; }
+  .home-card-steps { font-size: 12px; color: var(--text3); }
+  .home-card-tag { display: inline-block; margin-top: 8px; font-size: 10px; padding: 3px 8px; border-radius: 3px; font-family: 'IBM Plex Mono', monospace; }
+
+  /* ── CAGED ── */
+  .caged-toggle { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+
+  /* ── RESPONSIVE iPad ── */
+  @media (max-width: 900px) {
+    .sidebar {
+      position: fixed;
+      top: 0; left: 0;
+      height: 100vh;
+      z-index: 60;
+      transform: translateX(-100%);
+    }
+    .sidebar.open { transform: translateX(0); }
+    .sidebar-overlay.open { display: block; }
+    .menu-toggle { display: flex; align-items: center; }
+    .main { width: 100%; }
+    .page { padding: 24px 20px 24px; padding-top: 60px; }
+    .home-sections { grid-template-columns: 1fr; }
+    .page-title { font-size: 26px; }
+    .blues-grid { grid-template-columns: repeat(4, 1fr); gap: 6px; }
+    .bar-chord { font-size: 16px; }
+    .chord-display-row { flex-direction: column; }
+  }
+
+  @media (max-width: 480px) {
+    .blues-grid { gap: 4px; }
+    .bar-cell { min-height: 68px; padding: 10px 4px 8px; }
+    .bar-chord { font-size: 14px; }
+  }
+
+  /* ── SECTION DIVIDER ── */
+  .divider { height: 1px; background: var(--border); margin: 24px 0; }
+
+  h3 { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--text); margin-bottom: 12px; font-weight: 400; }
+  h4 { font-size: 13px; color: var(--text2); font-weight: 500; margin-bottom: 8px; font-family: 'IBM Plex Mono', monospace; text-transform: uppercase; letter-spacing: 1px; }
+
+  p { color: var(--text2); font-size: 14px; line-height: 1.7; margin-bottom: 12px; }
+  p:last-child { margin-bottom: 0; }
+
+  strong { color: var(--text); font-weight: 500; }
+
+  .highlight {
+    display: inline-block;
+    background: rgba(200,118,58,.12);
+    border: 1px solid rgba(200,118,58,.25);
+    color: var(--accent2);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    padding: 2px 8px;
+    border-radius: 4px;
+  }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media (max-width: 600px) { .two-col { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+<div class="sidebar-overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+<div class="app">
+  <!-- SIDEBAR -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">Guitar Guide</div>
+      <div class="sidebar-sub">Interactive Reference</div>
+    </div>
+    <nav class="sidebar-nav">
+
+      <div class="section-group">
+        <div class="nav-item active" onclick="goTo('home', this)">
+          <span class="nav-num">—</span>
+          <span class="nav-label">Overview</span>
+        </div>
+      </div>
+
+      <div class="section-group">
+        <div class="section-header">Section 2 · Lead</div>
+        <div class="nav-item" onclick="goTo('s2-1', this)"><span class="nav-num">01</span><span class="nav-label">Minor Pentatonic Box 1</span><span class="nav-tag tag-lead">lead</span></div>
+        <div class="nav-item" onclick="goTo('s2-2', this)"><span class="nav-num">02</span><span class="nav-label">Technique: Hammer, Pull, Slide</span><span class="nav-tag tag-lead">lead</span></div>
+        <div class="nav-item" onclick="goTo('s2-3', this)"><span class="nav-num">03</span><span class="nav-label">String Bends</span><span class="nav-tag tag-lead">lead</span></div>
+        <div class="nav-item" onclick="goTo('s2-4', this)"><span class="nav-num">04</span><span class="nav-label">Phrasing & Improvising</span><span class="nav-tag tag-lead">lead</span></div>
+        <div class="nav-item" onclick="goTo('s2-5', this)"><span class="nav-num">05</span><span class="nav-label">Boxes 2 & 5 — Connecting</span><span class="nav-tag tag-lead">lead</span></div>
+        <div class="nav-item" onclick="goTo('s2-6', this)"><span class="nav-num">06</span><span class="nav-label">Major Pentatonic</span><span class="nav-tag tag-lead">lead</span></div>
+        <div class="nav-item" onclick="goTo('s2-7', this)"><span class="nav-num">07</span><span class="nav-label">CAGED — E Shape</span><span class="nav-tag tag-lead">lead</span></div>
+        <div class="nav-item" onclick="goTo('s2-8', this)"><span class="nav-num">08</span><span class="nav-label">Improvise Over Backing Track</span><span class="nav-tag tag-lead">lead</span></div>
+      </div>
+
+      <div class="section-group">
+        <div class="section-header">Section 3 · Blues</div>
+        <div class="nav-item" onclick="goTo('s3-1', this)"><span class="nav-num">09</span><span class="nav-label">12-Bar Form</span><span class="nav-tag tag-blues">blues</span></div>
+        <div class="nav-item" onclick="goTo('s3-2', this)"><span class="nav-num">10</span><span class="nav-label">Key of E — Open Chords</span><span class="nav-tag tag-blues">blues</span></div>
+        <div class="nav-item" onclick="goTo('s3-3', this)"><span class="nav-num">11</span><span class="nav-label">Key of A — Dominant 7ths</span><span class="nav-tag tag-blues">blues</span></div>
+        <div class="nav-item" onclick="goTo('s3-4', this)"><span class="nav-num">12</span><span class="nav-label">Shuffle Rhythm</span><span class="nav-tag tag-blues">blues</span></div>
+        <div class="nav-item" onclick="goTo('s3-5', this)"><span class="nav-num">13</span><span class="nav-label">Quick Change & Turnaround</span><span class="nav-tag tag-blues">blues</span></div>
+        <div class="nav-item" onclick="goTo('s3-6', this)"><span class="nav-num">14</span><span class="nav-label">Boogie Bass Pattern</span><span class="nav-tag tag-blues">blues</span></div>
+        <div class="nav-item" onclick="goTo('s3-7', this)"><span class="nav-num">15</span><span class="nav-label">Minor Blues</span><span class="nav-tag tag-blues">blues</span></div>
+        <div class="nav-item" onclick="goTo('s3-8', this)"><span class="nav-num">16</span><span class="nav-label">Rhythm + Lead Together</span><span class="nav-tag tag-blues">blues</span></div>
+        <div class="nav-item" onclick="goTo('s3-9', this)"><span class="nav-num">17</span><span class="nav-label">Learn a Full Song</span><span class="nav-tag tag-blues">blues</span></div>
+      </div>
+
+    </nav>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main" id="main">
+
+    <!-- HOME -->
+    <div class="page active" id="page-home">
+      <div class="page-header">
+        <div class="page-eyebrow">Guitar Guide</div>
+        <div class="page-title">Your Learning Roadmap</div>
+        <div class="page-desc">A step-by-step interactive reference for natural lead playing and blues progressions. Tap any section to jump straight in.</div>
+      </div>
+      <div class="home-sections">
+        <div class="home-card" onclick="goTo('s2-1', null)">
+          <div class="home-card-num">Section 2</div>
+          <div class="home-card-title">Natural Lead Playing</div>
+          <div class="home-card-steps">8 steps · Pentatonic scales, techniques, CAGED</div>
+          <span class="home-card-tag tag-lead">Lead Guitar</span>
+        </div>
+        <div class="home-card" onclick="goTo('s3-1', null)">
+          <div class="home-card-num">Section 3</div>
+          <div class="home-card-title">Blues Progressions</div>
+          <div class="home-card-steps">9 steps · 12-bar, chords, shuffle, rhythm+lead</div>
+          <span class="home-card-tag tag-blues">Blues</span>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <h3>Practice Tips</h3>
+      <div class="two-col">
+        <div class="card">
+          <div class="tip-row"><div class="tip-icon">🎯</div><div class="tip-text"><strong>Go slow with a metronome.</strong> Muscle memory needs clean repetition before speed.</div></div>
+          <div class="tip-row"><div class="tip-icon">🎵</div><div class="tip-text"><strong>Learn songs you love.</strong> Context makes theory stick better than drills alone.</div></div>
+        </div>
+        <div class="card">
+          <div class="tip-row"><div class="tip-icon">🔗</div><div class="tip-text"><strong>Connect the two sections.</strong> Play a blues progression, then solo over it — that's the goal.</div></div>
+          <div class="tip-row"><div class="tip-icon">📱</div><div class="tip-text"><strong>Record yourself.</strong> You'll hear things you miss while playing.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- S2-1: Minor Pentatonic Box 1 -->
+    <div class="page" id="page-s2-1">
+      <div class="page-header">
+        <div class="page-eyebrow">Section 2 · Step 1</div>
+        <div class="page-title">Minor Pentatonic Box 1</div>
+        <div class="page-desc">The foundation of all lead playing. Master this one shape before anything else.</div>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:12%"></div></div>
+
+      <div class="card">
+        <div class="card-title">The Shape — Am at 5th Position</div>
+        <p>Five notes: <span class="highlight">A</span> <span class="highlight">C</span> <span class="highlight">D</span> <span class="highlight">E</span> <span class="highlight">G</span> — Root notes on frets 5 of low E, D string, and high e.</p>
+        <div class="fretboard-wrap" id="fb-box1"></div>
+        <div class="info-box" id="fb-box1-info">Tap any dot to learn about that note.</div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Key Points</div>
+        <div class="tip-row"><div class="tip-icon">👆</div><div class="tip-text"><strong>Index finger anchors fret 5</strong> — it covers all six strings there (like a barre).</div></div>
+        <div class="tip-row"><div class="tip-icon">🤙</div><div class="tip-text"><strong>Pinky covers frets 7 & 8</strong> — stretch comfortably, don't tense up.</div></div>
+        <div class="tip-row"><div class="tip-icon">🔄</div><div class="tip-text"><strong>Low E and high e are mirrors</strong> — same fingering (frets 5 and 8), making the box easier to memorize.</div></div>
+        <div class="tip-row"><div class="tip-icon">🎯</div><div class="tip-text"><strong>Three root notes</strong> (dark dots) are your anchors — start and end phrases on these.</div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Practice Goal</div>
+        <p>Play the scale ascending and descending cleanly at 60 BPM. Every note should ring clearly — no buzzing, no muting adjacent strings. When you can do that, you're ready for Step 2.</p>
+      </div>
+    </div>
+
+    <!-- S2-2: Technique -->
+    <div class="page" id="page-s2-2">
+      <div class="page-header">
+        <div class="page-eyebrow">Section 2 · Step 2</div>
+        <div class="page-title">Core Techniques</div>
+        <div class="page-desc">Hammer-ons, pull-offs, and slides bring the scale to life. Learn these within Box 1 before expanding.</div>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:24%"></div></div>
+
+      <div class="scale-toggle-row" id="tech-tabs">
+        <button class="sc-btn active" onclick="showTech('hammer', this)">Hammer-on</button>
+        <button class="sc-btn" onclick="showTech('pull', this)">Pull-off</button>
+        <button class="sc-btn" onclick="showTech('slide', this)">Slide</button>
+      </div>
+
+      <div id="tech-hammer">
+        <div class="card">
+          <div class="card-title">Hammer-on — h</div>
+          <p><strong>What it is:</strong> Pick the lower note, then "hammer" a finger firmly onto a higher fret on the same string — without picking again. The second note sounds from the impact alone.</p>
+          <p><strong>In Box 1:</strong> Try it on the A string — pick fret 5 (D), then hammer onto fret 7 (E). You should hear both notes clearly from one pick stroke.</p>
+          <div class="tip-card"><strong>Tip:</strong> The hammer needs to be firm and placed right behind the fret wire. A weak tap just mutes the string. Aim for the same volume on both notes.</div>
+        </div>
+        <div class="card">
+          <div class="card-title">Notation</div>
+          <p>Written as: <span class="highlight">5h7</span> — the number before h is picked, the number after is hammered.</p>
+          <p><strong>Common Box 1 hammer-ons:</strong> 5h7 on A string, D string, G string. These are your most-used phrases in blues and rock.</p>
+        </div>
+      </div>
+
+      <div id="tech-pull" style="display:none">
+        <div class="card">
+          <div class="card-title">Pull-off — p</div>
+          <p><strong>What it is:</strong> The reverse of a hammer-on. Fret both notes first, pick the higher one, then flick your finger off toward the floor — the lower note sounds without re-picking.</p>
+          <p><strong>In Box 1:</strong> Place fingers on fret 5 and fret 7 of the A string. Pick fret 7 (E), then flick your ring/pinky off to sound fret 5 (D).</p>
+          <div class="tip-card"><strong>Tip:</strong> The "flick" is the key — don't just lift straight up. A sideways motion toward the floor plucks the string as you pull off, giving the lower note volume.</div>
+        </div>
+        <div class="card">
+          <div class="card-title">Combining hammer + pull</div>
+          <p>Written as: <span class="highlight">5h7p5</span> — pick once, hammer up, pull back down. This is the foundation of legato phrasing and a staple blues lick.</p>
+          <p>Practice on a single string until both the hammer and pull are equal in volume to the picked note.</p>
+        </div>
+      </div>
+
+      <div id="tech-slide" style="display:none">
+        <div class="card">
+          <div class="card-title">Slide — / or \</div>
+          <p><strong>What it is:</strong> Pick a note, then slide your fretting finger up (/) or down (\) to another fret while maintaining pressure — the pitch glides smoothly between the two notes.</p>
+          <p><strong>In Box 1:</strong> Pick fret 5 on the G string (C), then slide up to fret 7 (D). Keep the pressure consistent so the note sustains through the slide.</p>
+          <div class="tip-card"><strong>Tip:</strong> You can slide into a note from below without a defined starting fret — called a "scoop." Pick below the target note and slide up to it for an expressive, vocal quality.</div>
+        </div>
+        <div class="card">
+          <div class="card-title">Slide vs. Bend</div>
+          <p>A <strong>slide</strong> moves along a string to a specific fret. A <strong>bend</strong> (Step 3) pushes the string sideways to raise the pitch without moving up the neck. Both are essential but feel completely different — slides are smooth and connected, bends are more expressive and vocal.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- S2-3: Bends -->
+    <div class="page" id="page-s2-3">
+      <div class="page-header">
+        <div class="page-eyebrow">Section 2 · Step 3</div>
+        <div class="page-title">String Bends</div>
+        <div class="page-desc">The most expressive technique in blues lead. A well-executed bend sounds like the guitar is singing.</div>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:36%"></div></div>
+
+      <div class="card">
+        <div class="card-title">How to Bend</div>
+        <p>Fret a note, pick it, then push the string <strong>toward the ceiling</strong> (on low strings) or <strong>toward the floor</strong> (on high strings) while maintaining your pick-hand grip. The pitch rises as you push.</p>
+        <p><strong>Start here:</strong> B string, fret 7 (G). Bend upward a whole step — the target pitch is A. Use your ring finger to bend, with index and middle behind it for support.</p>
+      </div>
+
+      <div class="two-col">
+        <div class="card">
+          <div class="card-title">Half-step bend</div>
+          <p>Raises pitch by 1 fret. Subtle and tension-filled. Great for blues expression without full commitment. Written: <span class="highlight">7b(½)</span></p>
+        </div>
+        <div class="card">
+          <div class="card-title">Whole-step bend</div>
+          <p>Raises pitch by 2 frets. The most common blues bend. Classic, expressive, the heart of pentatonic lead. Written: <span class="highlight">7b</span></p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Best Bend Positions in Box 1</div>
+        <ul class="finger-steps">
+          <li><strong>G string, fret 5 (C)</strong> — bend whole step to D. Strong, mid-range cry.</li>
+          <li><strong>B string, fret 7 (G)</strong> — bend whole step to A (the root). Extremely expressive.</li>
+          <li><strong>B string, fret 8 (G#)</strong> — half-step bend. Subtle and bluesy.</li>
+          <li><strong>High e, fret 8 (C)</strong> — bend whole step to D. Bright, cutting sound at the top.</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Targeting pitch accurately</div>
+        <p>The biggest mistake beginners make is bending without knowing the target pitch. Always <strong>know what note you're bending to</strong> before you play it. Fret the target note first, listen to it, then come back and bend up to match it. Inaccurate bends are the fastest way to sound out of tune.</p>
+        <div class="tip-card"><strong>Bend + Vibrato:</strong> Once you've bent to the target pitch, add vibrato — a small oscillation of the string — by repeatedly bending slightly up and releasing. This is the signature of most great blues lead playing.</div>
+      </div>
+    </div>
+
+    <!-- S2-4: Phrasing -->
+    <div class="page" id="page-s2-4">
+      <div class="page-header">
+        <div class="page-eyebrow">Section 2 · Step 4</div>
+        <div class="page-title">Phrasing & Improvising</div>
+        <div class="page-desc">Don't just run the scale — tell a story. Phrasing is about musical sentences, not note lists.</div>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:48%"></div></div>
+
+      <div class="card">
+        <div class="card-title">The Golden Rule</div>
+        <p>A scale is vocabulary. Phrasing is language. Running up and down the pentatonic from bottom to top isn't a phrase — it's a finger exercise. A phrase is <strong>3–6 notes with intention, space, and a destination.</strong></p>
+      </div>
+
+      <div class="two-col">
+        <div class="card">
+          <div class="card-title">Ingredients of a good phrase</div>
+          <ul class="finger-steps">
+            <li><strong>Start note</strong> — often a chord tone or root</li>
+            <li><strong>Movement</strong> — a lick, bend, hammer, or run</li>
+            <li><strong>Landing note</strong> — a chord tone to resolve on</li>
+            <li><strong>Space</strong> — silence after the phrase</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-title">Call and response</div>
+          <p>Play a phrase (the "call"), then pause. The pause is the "response" — it gives your phrase room to breathe and the listener time to absorb it.</p>
+          <p>Think of it as a conversation. You say something, then wait. You don't talk over yourself.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Practice Method</div>
+        <p><strong>1. Record a loop</strong> — strum an A minor or A7 chord as a drone. Even 4 bars looped is enough.</p>
+        <p><strong>2. Improvise for 5 minutes</strong> — use only Box 1. Don't worry about sounding good, focus on making phrases rather than running scales.</p>
+        <p><strong>3. Listen back</strong> — identify one phrase that sounded musical. Figure out what made it work (was it the space? The landing note? A bend?). Repeat that intentionally.</p>
+        <div class="tip-card"><strong>Dynamics:</strong> Not every note needs to be the same volume. Lighter notes in the middle of a phrase and a stronger hit on the landing note creates natural shape and expression.</div>
+      </div>
+    </div>
+
+    <!-- S2-5: Boxes 2 & 5 -->
+    <div class="page" id="page-s2-5">
+      <div class="page-header">
+        <div class="page-eyebrow">Section 2 · Step 5</div>
+        <div class="page-title">Boxes 2 & 5 — Connecting the Neck</div>
+        <div class="page-desc">Box 1 is home. Boxes 2 and 5 let you travel up and down the neck without leaving the key.</div>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:55%"></div></div>
+
+      <div class="scale-toggle-row" id="box-tabs">
+        <button class="sc-btn active" onclick="showBoxView('both', this)">Both boxes</button>
+        <button class="sc-btn" onclick="showBoxView('box1', this)">Box 1 only</button>
+        <button class="sc-btn" onclick="showBoxView('box2', this)">Box 2 only</button>
+      </div>
+
+      <div class="card">
+        <div class="fretboard-wrap" id="fb-boxes"></div>
+        <div class="info-box" id="fb-boxes-info">The shared notes (thick-bordered dots) at frets 7–8 are your bridges between boxes. Tap any dot.</div>
+      </div>
+
+      <div class="two-col">
+        <div class="card">
+          <div class="card-title">Box 1 → Box 2 (up the neck)</div>
+          <p>Box 2 sits at frets 7–10. The shared notes at fret 7–8 are your doorway. When you hit one of those while playing Box 1, you can keep ascending into Box 2.</p>
+          <div class="tip-card"><strong>Shift exercise:</strong> Play Box 1 to the top (high e), then keep going up into Box 2. Slow and clean first.</div>
+        </div>
+        <div class="card">
+          <div class="card-title">Box 5 (down the neck)</div>
+          <p>Box 5 sits below Box 1 at frets 2–5. It uses the same shared root notes on fret 5. Once Box 2 feels comfortable, learn Box 5 the same way — connecting downward from Box 1.</p>
+          <div class="tip-card"><strong>Navigation:</strong> Think of Box 1 as the center of a map. Box 2 is north (up), Box 5 is south (down).</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- S2-6: Major Penta -->
+    <div class="page" id="page-s2-6">
+      <div class="page-header">
+        <div class="page-eyebrow">Section 2 · Step 6</div>
+        <div class="page-title">The Major Pentatonic</div>
+        <div class="page-desc">Same 5-box system, completely different emotional character. The key to blending light and dark in blues.</div>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:62%"></div></div>
+
+      <div class="scale-toggle-row" id="maj-tabs">
+        <button class="sc-btn active-blue sc-btn" onclick="showMajView('major', this)">A Major</button>
+        <button class="sc-btn" onclick="showMajView('minor', this)">A Minor</button>
+        <button class="sc-btn" onclick="showMajView('both', this)">Compare</button>
+      </div>
+
+      <div class="card">
+        <div class="fretboard-wrap" id="fb-major"></div>
+        <div class="info-box" id="fb-major-info">A Major Pentatonic sits at frets 2–5. Tap any dot to explore each note's role.</div>
+      </div>
+
+      <div class="two-col">
+        <div class="card">
+          <div class="card-title">A Minor Pentatonic</div>
+          <p>Notes: A · C · D · E · G</p>
+          <p>Sound: dark, tense, bluesy. The b3 (C) and b7 (G) are the "blue notes" that give it grit.</p>
+        </div>
+        <div class="card">
+          <div class="card-title">A Major Pentatonic</div>
+          <p>Notes: A · B · C# · E · F#</p>
+          <p>Sound: bright, resolved, sunny. The major 3rd (C#) and 6th (F#) give it lift and sweetness.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">The Blues Trick</div>
+        <p>The defining move of blues lead is <strong>switching between major and minor pentatonic over the same root.</strong> Minor builds tension and darkness, major releases it with brightness. BB King, Eric Clapton, and Stevie Ray Vaughan all use this constantly.</p>
+        <p>Major box sits 3 frets below minor box. When you want brightness, slide down 3 frets. Tension? Slide back up.</p>
+        <div class="tip-card"><strong>They share A (root) and E (5th)</strong> — these are your common ground. You can pivot on either note to move between the two scales without it sounding like a mistake.</div>
+      </div>
+    </div>
+
+    <!-- S2-7: CAGED -->
+    <div class="page" id="page-s2-7">
+      <div class="page-header">
+        <div class="page-eyebrow">Section 2 · Step 7</div>
+        <div class="page-title">CAGED — E Shape & Major Scale</div>
+        <div class="page-desc">Map one scale position to a chord shape you already know. This connects rhythm and lead in a single framework.</div>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:74%"></div></div>
+
+      <div class="caged-toggle" id="caged-tabs">
+        <button class="sc-btn active-green sc-btn" onclick="showCagedView('all', this)">Full scale + chord</button>
+        <button class="sc-btn" onclick="showCagedView('chord', this)">Chord tones only</button>
+        <button class="sc-btn" onclick="showCagedView('scale', this)">Color tones only</button>
+      </div>
+
+      <div class="card">
+        <div class="fretboard-wrap" id="fb-caged"></div>
+        <div class="info-box" id="fb-caged-info">Dark green = chord tones (root, 3rd, 5th) — your safe landing notes. Outlined = color tones. Tap any dot.</div>
+      </div>
+
+      <div class="two-col">
+        <div class="card">
+          <div class="card-title">The concept</div>
+          <p>The A major barre chord (E shape at fret 5) has its notes scattered across the neck. The major scale wraps around that shape — chord tones embedded inside the scale.</p>
+          <p>When soloing over A major, <strong>landing on chord tones always sounds resolved and intentional.</strong></p>
+        </div>
+        <div class="card">
+          <div class="card-title">Practice</div>
+          <p><strong>Step 1:</strong> Strum the A major barre chord. Listen to it.</p>
+          <p><strong>Step 2:</strong> Switch to "chord tones only" view and improvise using only those notes. Notice how they all sound "inside."</p>
+          <p><strong>Step 3:</strong> Gradually weave in the color tones as passing notes between chord tones.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- S2-8: Backing Track -->
+    <div class="page" id="page-s2-8">
+      <div class="page-header">
+        <div class="page-eyebrow">Section 2 · Step 8</div>
+        <div class="page-title">Improvise Over a Backing Track</div>
+        <div class="page-desc">This is the final integration step for Section 2. Everything you've learned comes together here.</div>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:82%"></div></div>
+
+      <div class="card">
+        <div class="card-title">What to do</div>
+        <p>Find a blues or rock backing track in the key of <strong>A or E</strong> on YouTube (search "blues backing track A minor 80bpm"). Play continuously over it for 5+ minutes without stopping.</p>
+        <p>Don't think about "playing correctly." Think about <strong>phrasing, dynamics, and space.</strong></p>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Checklist — things to focus on</div>
+        <ul class="finger-steps">
+          <li>✓ Stay in Box 1 first — master one box before wandering</li>
+          <li>✓ Make phrases, not scale runs — 3-6 notes then silence</li>
+          <li>✓ Land on root notes (A) at phrase endings</li>
+          <li>✓ Vary your dynamics — some notes soft, landing notes strong</li>
+          <li>✓ Use at least one bend per phrase once you're comfortable</li>
+          <li>✓ Try call-and-response — phrase, pause, phrase, pause</li>
+        </ul>
+      </div>
+
+      <div class="two-col">
+        <div class="card">
+          <div class="card-title">Suggested BPM progression</div>
+          <ul class="finger-steps">
+            <li>Week 1–2: 60–70 BPM (slow blues)</li>
+            <li>Week 3–4: 80–90 BPM (medium shuffle)</li>
+            <li>Week 5+: 100–120 BPM (upbeat blues)</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-title">Ready for Section 3?</div>
+          <p>When you can improvise confidently over a blues backing track for 5 minutes, using phrases (not runs) with bends and space — you're ready to move fully into Section 3 and combine rhythm + lead.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- S3-1: 12 Bar -->
+    <div class="page" id="page-s3-1">
+      <div class="page-header">
+        <div class="page-eyebrow">Section 3 · Step 1</div>
+        <div class="page-title">The 12-Bar Blues Form</div>
+        <div class="page-desc">The foundation of all blues. Four rows, four bars each, three chords. Tap any bar to understand its role.</div>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:55%"></div></div>
+
+      <div class="key-var-row">
+        <span class="kv-label">Key:</span>
+        <button class="kv-btn active" onclick="setBluesKey('A', this)">Key of A</button>
+        <button class="kv-btn" onclick="setBluesKey('E', this)">Key of E</button>
+        <span style="width:12px"></span>
+        <span class="kv-label">Variation:</span>
+        <button class="kv-btn active" id="var-std" onclick="setBluesVar('standard', this)">Standard</button>
+        <button class="kv-btn" onclick="setBluesVar('quick', this)">Quick change</button>
+        <button class="kv-btn" onclick="setBluesVar('turnaround', this)">Turnaround</button>
+      </div>
+
+      <div class="legend-row">
+        <div class="legend-item"><div class="swatch" style="background:rgba(200,118,58,.4)"></div> I — tonic (home)</div>
+        <div class="legend-item"><div class="swatch" style="background:rgba(74,143,192,.4)"></div> IV — subdominant (lift)</div>
+        <div class="legend-item"><div class="swatch" style="background:rgba(90,154,80,.4)"></div> V — dominant (tension)</div>
+      </div>
+
+      <div class="blues-grid" id="blues-grid-main"></div>
+      <div class="blues-info" id="blues-info-main">The 12-bar blues — four rows of four bars. Tap any chord to learn its role.</div>
+
+      <div class="divider"></div>
+
+      <div class="two-col">
+        <div class="card">
+          <div class="card-title">Reading the grid</div>
+          <p>Each cell = one bar (4 beats). Read left to right, top to bottom. When you hit bar 12, loop back to bar 1 — it repeats until someone signals a stop.</p>
+        </div>
+        <div class="card">
+          <div class="card-title">The three emotions</div>
+          <p><strong>I (red):</strong> Home. Stable, grounded.<br><strong>IV (blue):</strong> Lift. Movement away from home.<br><strong>V (green):</strong> Tension. Strongly wants to resolve back to I.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- S3-2: Key of E -->
+    <div class="page" id="page-s3-2">
+      <div class="page-header">
+        <div class="page-eyebrow">Section 3 · Step 2</div>
+        <div class="page-title">Key of E — Open Chords</div>
+        <div class="page-desc">E, A, and B7 are open-string friendly and easy to play. The best starting key for the 12-bar blues.</div>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:62%"></div></div>
+
+      <div class="chord-nav-row" id="e-chord-nav">
+        <button class="chord-pill active" onclick="showEChord('E7', this)">E7 (I)</button>
+        <button class="chord-pill" onclick="showEChord('A7', this)">A7 (IV)</button>
+        <button class="chord-pill" onclick="showEChord('B7', this)">B7 (V)</button>
+      </div>
+
+      <div class="chord-display-row">
+        <div><svg id="e-chord-svg" width="190" height="250" viewBox="0 0 190 250"></svg></div>
+        <div style="flex:1; min-width:200px">
+          <div class="chord-title" id="e-chord-name">E7</div>
+          <div class="chord-subtitle" id="e-chord-sub"></div>
+          <div class="chord-notes-grid" id="e-chord-pills"></div>
+          <ul class="finger-steps" id="e-chord-fingers"></ul>
+          <div class="tip-card" id="e-chord-tip"></div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <div class="card">
+        <div class="card-title">Practice the full 12-bar in E</div>
+        <p>Strum through: <strong>E7 → E7 → E7 → E7 → A7 → A7 → E7 → E7 → B7 → A7 → E7 → E7</strong></p>
+        <p>Focus on clean chord changes. The goal is to keep time, not to rush between chords.</p>
+      </div>
+    </div>
+
+    <!-- S3-3: Key of A + Dominant 7ths -->
+    <div class="page" id="page-s3-3">
+      <div class="page-header">
+        <div class="page-eyebrow">Section 3 · Steps 2–4</div>
+        <div class="page-title">Dominant 7th Chord Shapes</div>
+        <div class="page-desc">The flat 7th in every chord is what makes blues sound like blues. Learn these five shapes cold.</div>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:70%"></div></div>
+
+      <div class="chord-nav-row" id="chord-nav-main">
+        <button class="chord-pill active" onclick="showMainChord('A7', this)">A7</button>
+        <button class="chord-pill" onclick="showMainChord('D7', this)">D7</button>
+        <button class="chord-pill" onclick="showMainChord('E7', this)">E7</button>
+        <button class="chord-pill" onclick="showMainChord('G7', this)">G7</button>
+        <button class="chord-pill" onclick="showMainChord('B7', this)">B7</button>
+      </div>
+
+      <div class="chord-display-row">
+        <div><svg id="main-chord-svg" width="190" height="250" viewBox="0 0 190 250"></svg></div>
+        <div style="flex:1; min-width:200px">
+          <div class="chord-title" id="main-chord-name">A7</div>
+          <div class="chord-subtitle" id="main-chord-sub"></div>
+          <div class="chord-notes-grid" id="main-chord-pills"></div>
+          <ul class="finger-steps" id="main-chord-fingers"></ul>
+          <div class="tip-card" id="main-chord-tip"></div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <div class="card">
+        <div class="card-title">The flat 7th — what makes blues sound like blues</div>
+        <p>Every dominant 7th chord contains a <strong>flat 7th (b7)</strong> — one semitone below the major 7th. In A7 it's the open G string. In E7 it's the open D string. In G7 it's the F on the high e.</p>
+        <p>That note creates harmonic tension that <em>wants to resolve</em> — which is exactly the feeling that defines blues music. Without the b7, these are just plain major chords.</p>
+      </div>
+    </div>
+
+    <!-- S3-4: Shuffle -->
+    <div class="page" id="page-s3-4">
+      <div class="page-header">
+        <div class="page-eyebrow">Section 3 · Step 5</div>
+        <div class="page-title">The Shuffle Rhythm</div>
+        <div class="page-desc">The shuffle feel is the rhythmic DNA of blues. Without it, you're just playing the chords — not feeling them.</div>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:74%"></div></div>
+
+      <div class="card">
+        <div class="card-title">What is a shuffle?</div>
+        <p>Normal eighth notes are evenly spaced: <strong>1 + 2 + 3 + 4 +</strong></p>
+        <p>A shuffle swings those eighth notes into a <strong>long-short triplet feel:</strong></p>
+        <p style="font-family:'IBM Plex Mono',monospace; font-size:16px; color:var(--accent2); letter-spacing:2px; margin: 8px 0;">DU— DU— DU— DU—</p>
+        <p>Think of it as: <em>"trip-let, trip-let, trip-let, trip-let"</em> — but only playing the first and third note of each triplet group.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Hearing it first</div>
+        <p>Before you play it, <strong>listen to it</strong>. Find any of these songs and listen for the rhythmic pulse:</p>
+        <ul class="finger-steps">
+          <li>"Sweet Home Chicago" — Robert Johnson / Blues Brothers</li>
+          <li>"Hound Dog" — Elvis Presley</li>
+          <li>"Pride and Joy" — Stevie Ray Vaughan</li>
+          <li>"Johnny B. Goode" — Chuck Berry</li>
+        </ul>
+        <div class="tip-card"><strong>Body trick:</strong> Tap your foot on beats 1 and 3 (the "strong" beats). The shuffle rhythm should feel like it's swinging around that foot tap. If your foot is fighting the rhythm, slow down.</div>
+      </div>
+
+      <div class="two-col">
+        <div class="card">
+          <div class="card-title">On guitar — the basic pattern</div>
+          <p>Root note (down), then 5th (down) — alternating on the low strings. In E: alternate between open E string and fret 2 of A string. In A: fret 0 of A string and fret 2 of D string.</p>
+        </div>
+        <div class="card">
+          <div class="card-title">Adding the 6th</div>
+          <p>For the classic blues shuffle, alternate: root, 5th, root, 6th. In E: open E, A string fret 2, open E, A string fret 4. This is the heartbeat of most 12-bar blues songs.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- S3-5: Quick Change & Turnaround -->
+    <div class="page" id="page-s3-5">
+      <div class="page-header">
+        <div class="page-eyebrow">Section 3 · Step 6</div>
+        <div class="page-title">Quick Change & Turnaround</div>
+        <div class="page-desc">These two variations transform the basic 12-bar into something that sounds authentic and musical.</div>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:78%"></div></div>
+
+      <div class="scale-toggle-row">
+        <button class="sc-btn active" id="qc-std-btn" onclick="showQCVar('standard')">Standard</button>
+        <button class="sc-btn" id="qc-quick-btn" onclick="showQCVar('quick')">Quick Change</button>
+        <button class="sc-btn" id="qc-turn-btn" onclick="showQCVar('turnaround')">Turnaround</button>
+      </div>
+
+      <div class="legend-row">
+        <div class="legend-item"><div class="swatch" style="background:rgba(200,118,58,.4)"></div> I</div>
+        <div class="legend-item"><div class="swatch" style="background:rgba(74,143,192,.4)"></div> IV</div>
+        <div class="legend-item"><div class="swatch" style="background:rgba(90,154,80,.4)"></div> V</div>
+      </div>
+
+      <div class="blues-grid" id="blues-grid-qc"></div>
+      <div class="blues-info" id="blues-info-qc">Select a variation above to see and hear the difference. Tap any bar for details.</div>
+
+      <div class="divider"></div>
+      <div class="two-col">
+        <div class="card">
+          <div class="card-title">Quick change</div>
+          <p>The IV chord appears in <strong>bar 2</strong> (instead of staying on I). Gives the progression more forward momentum and is used in the majority of real blues songs.</p>
+          <p>If someone calls "12-bar in A with a quick change" — A7 in bars 1, 3, 4 and D7 in bar 2.</p>
+        </div>
+        <div class="card">
+          <div class="card-title">Turnaround</div>
+          <p><strong>Bar 12</strong> switches from I to V (instead of staying on I). The V chord in the last bar launches you straight back to bar 1 with energy and momentum.</p>
+          <p>Without a turnaround, the end of the progression sounds like a full stop. With it, the loop feels inevitable and alive.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- S3-6: Boogie Bass -->
+    <div class="page" id="page-s3-6">
+      <div class="page-header">
+        <div class="page-eyebrow">Section 3 · Step 7</div>
+        <div class="page-title">Boogie-Woogie Bass Pattern</div>
+        <div class="page-desc">Play rhythm and melody at the same time. This is the foundation of solo blues guitar.</div>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:82%"></div></div>
+
+      <div class="card">
+        <div class="card-title">What it is</div>
+        <p>Instead of strumming full chords, you play an <strong>alternating bass line</strong> on the two lowest strings of each chord — root, 5th, root, 6th — while keeping the shuffle feel. This lets one guitarist sound like a full rhythm section.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Pattern for each chord</div>
+        <ul class="finger-steps">
+          <li><strong>E chord:</strong> Low E open (E) → A string fret 2 (B) → Low E open (E) → A string fret 4 (C#) — repeat</li>
+          <li><strong>A chord:</strong> A string open (A) → D string fret 2 (E) → A string open (A) → D string fret 4 (F#) — repeat</li>
+          <li><strong>B chord:</strong> A string fret 2 (B) → D string fret 4 (F#) → A string fret 2 (B) → D string fret 6 (G#) — repeat</li>
+        </ul>
+        <div class="tip-card"><strong>Right hand:</strong> Use a pick with all downstrokes on each beat, or use your thumb and index in a fingerpicking motion. Downstrokes give more drive; fingerpicking gives more control.</div>
+      </div>
+
+      <div class="two-col">
+        <div class="card">
+          <div class="card-title">Play it over the 12-bar</div>
+          <p>Apply the appropriate pattern to each chord as you move through the 12-bar form. The chord changes but the pattern shape stays the same — just move it to the right strings.</p>
+        </div>
+        <div class="card">
+          <div class="card-title">Classic examples</div>
+          <ul class="finger-steps">
+            <li>"Johnny B. Goode" — Chuck Berry</li>
+            <li>"Roll Over Beethoven" — Chuck Berry</li>
+            <li>"Tush" — ZZ Top</li>
+            <li>Most early rock & roll guitar parts</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- S3-7: Minor Blues -->
+    <div class="page" id="page-s3-7">
+      <div class="page-header">
+        <div class="page-eyebrow">Section 3 · Step 8</div>
+        <div class="page-title">Minor Blues</div>
+        <div class="page-desc">Darker, moodier, more melancholic. The minor blues uses the same 12-bar form with minor 7th chords instead of dominant 7ths.</div>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:88%"></div></div>
+
+      <div class="two-col">
+        <div class="card">
+          <div class="card-title">Major blues</div>
+          <p>Uses dominant 7th chords: A7, D7, E7</p>
+          <p>Sound: gritty tension, swing, release. The classic 12-bar feel.</p>
+        </div>
+        <div class="card">
+          <div class="card-title">Minor blues</div>
+          <p>Uses minor 7th chords: Am7, Dm7, Em7</p>
+          <p>Sound: brooding, melancholic, emotionally heavy. Think slow blues ballads.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Minor Blues in Am — 12-bar form</div>
+        <div class="blues-grid" id="blues-grid-minor"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Minor 7th chord shapes</div>
+        <ul class="finger-steps">
+          <li><strong>Am7:</strong> x02010 — Open A string, D fret 2, G open, B fret 1, high e open</li>
+          <li><strong>Dm7:</strong> xx0211 — D open, G fret 2, B fret 1, high e fret 1</li>
+          <li><strong>Em7:</strong> 020000 — Low E open, A fret 2, all others open</li>
+        </ul>
+        <div class="tip-card"><strong>Lead over minor blues:</strong> The A minor pentatonic scale (Box 1 at fret 5) fits perfectly over the minor blues — you don't need to change your scale. The mood difference comes entirely from the chord progression underneath.</div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Classic minor blues tracks to study</div>
+        <ul class="finger-steps">
+          <li>"The Thrill is Gone" — BB King (Bm minor blues)</li>
+          <li>"Little Wing" — Jimi Hendrix (Em)</li>
+          <li>"Since I've Been Loving You" — Led Zeppelin (Cm)</li>
+          <li>"Red House" — Jimi Hendrix (Bb minor blues)</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- S3-8: Rhythm + Lead -->
+    <div class="page" id="page-s3-8">
+      <div class="page-header">
+        <div class="page-eyebrow">Section 3 · Step 9</div>
+        <div class="page-title">Rhythm + Lead Together</div>
+        <div class="page-desc">This is the complete blues guitarist skill. Rhythm and lead aren't separate — they're a conversation.</div>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:94%"></div></div>
+
+      <div class="card">
+        <div class="card-title">Call and Response — the core idea</div>
+        <p>Play <strong>4 bars of rhythm</strong> (strumming chords or boogie bass), then <strong>switch to lead</strong> for 4 bars, answering what the rhythm just said. This mirrors how blues vocalists interact with guitar — the voice calls, the guitar responds.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Targeting chord tones on changes</div>
+        <p>When the chord changes in the 12-bar form, resolve your lead phrase to a <strong>chord tone of the new chord</strong> on beat 1. This is what separates musical soloing from running scales.</p>
+        <ul class="finger-steps">
+          <li>Moving to <strong>D7 (IV)?</strong> Target D, F#, or C at the change</li>
+          <li>Moving to <strong>E7 (V)?</strong> Target E, G#, or D at the change</li>
+          <li>Back to <strong>A7 (I)?</strong> Target A, C#, or G at the change</li>
+        </ul>
+        <div class="tip-card"><strong>You don't need to be perfect.</strong> Even targeting the root note on every chord change is a massive improvement over ignoring the changes. Add the 3rd and 7th once the root feels natural.</div>
+      </div>
+
+      <div class="two-col">
+        <div class="card">
+          <div class="card-title">Practice structure</div>
+          <ul class="finger-steps">
+            <li>Play full 12-bar rhythm once (chords only)</li>
+            <li>Play full 12-bar lead once (pentatonic only)</li>
+            <li>Alternate: 4 bars rhythm, 4 bars lead</li>
+            <li>Mix freely — switch whenever it feels right</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-title">The goal</div>
+          <p>When you can move fluidly between rhythm and lead over the 12-bar form — making musical phrases, hitting chord tones, and keeping the groove — you're playing blues guitar.</p>
+          <p>Everything else is refinement.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- S3-9: Full Song -->
+    <div class="page" id="page-s3-9">
+      <div class="page-header">
+        <div class="page-eyebrow">Section 3 · Step 10</div>
+        <div class="page-title">Learn a Full Blues Song</div>
+        <div class="page-desc">Theory becomes music when you apply it to a real song. This step ties everything together.</div>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div>
+
+      <div class="card">
+        <div class="card-title">Why this matters</div>
+        <p>Learning a complete song forces you to apply rhythm, chord changes, shuffle feel, and lead phrasing in a real musical context. It also gives you something to actually <em>play</em> — which is the whole point.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Recommended starting songs</div>
+        <ul class="finger-steps">
+          <li><strong>"Pride and Joy" — Stevie Ray Vaughan</strong> (E, shuffle, boogie bass pattern, great intro lick)</li>
+          <li><strong>"Sweet Home Chicago" — Robert Johnson</strong> (A, quick change, singalong feel)</li>
+          <li><strong>"Crossroads" — Cream / Robert Johnson</strong> (A, fast shuffle, classic rock blues)</li>
+          <li><strong>"Before You Accuse Me" — Eric Clapton</strong> (E, medium shuffle, very learnable)</li>
+          <li><strong>"Texas Flood" — SRV</strong> (G minor, slow blues, great for minor blues study)</li>
+        </ul>
+      </div>
+
+      <div class="two-col">
+        <div class="card">
+          <div class="card-title">How to learn a song</div>
+          <ul class="finger-steps">
+            <li>Listen 5+ times before picking up the guitar</li>
+            <li>Identify the key and the 12-bar structure</li>
+            <li>Learn the rhythm part first (chord shapes + shuffle)</li>
+            <li>Add the intro lick or signature riff</li>
+            <li>Learn the solo last, phrase by phrase</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-title">You've made it</div>
+          <p>Completing this roadmap means you understand the <strong>pentatonic scales</strong>, <strong>basic lead techniques</strong>, the <strong>12-bar form</strong>, <strong>dominant 7th chords</strong>, <strong>shuffle rhythm</strong>, and how <strong>rhythm and lead connect.</strong></p>
+          <p>That's the entire foundation of blues guitar. Everything from here is deepening what you already have.</p>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end main -->
+</div><!-- end app -->
+
+<script>
+// ── NAVIGATION ──
+let currentPage = 'home';
+
+function goTo(id, navEl) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const page = document.getElementById('page-' + id);
+  if (page) { page.classList.add('active'); currentPage = id; }
+  if (navEl) navEl.classList.add('active');
+  else {
+    document.querySelectorAll('.nav-item').forEach(n => {
+      if (n.getAttribute('onclick') && n.getAttribute('onclick').includes("'" + id + "'")) n.classList.add('active');
+    });
+  }
+  document.getElementById('main').scrollTop = 0;
+  if (window.innerWidth <= 900) closeSidebar();
+  initPage(id);
+}
+
+function toggleSidebar() {
+  const sb = document.getElementById('sidebar');
+  const ov = document.getElementById('overlay');
+  sb.classList.toggle('open');
+  ov.classList.toggle('open');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlay').classList.remove('open');
+}
+
+function initPage(id) {
+  if (id === 's2-1') initBox1();
+  if (id === 's2-5') initBoxes();
+  if (id === 's2-6') initMajor();
+  if (id === 's2-7') initCaged();
+  if (id === 's3-1') initBluesGrid('blues-grid-main', 'blues-info-main');
+  if (id === 's3-2') { showEChord('E7', document.querySelector('#e-chord-nav .chord-pill')); }
+  if (id === 's3-3') { showMainChord('A7', document.querySelector('#chord-nav-main .chord-pill')); }
+  if (id === 's3-5') initQCGrid();
+  if (id === 's3-7') initMinorBlues();
+}
+
+// ── FRETBOARD DRAWING ──
+const STRING_X = [28, 58, 88, 118, 148, 178];
+const NUT_Y = 55;
+const FRET_H = 38;
+const fretY = n => NUT_Y + n * FRET_H - FRET_H / 2;
+
+function drawFretboard(svgEl, fretStart, fretEnd, notes, onTap, infoId) {
+  const numFrets = fretEnd - fretStart;
+  const W = 206, H = NUT_Y + numFrets * FRET_H + 30;
+  svgEl.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  svgEl.setAttribute('width', '100%');
+  svgEl.style.maxWidth = '320px';
+  let html = '';
+
+  // Fret lines
+  for (let f = 0; f <= numFrets; f++) {
+    const y = NUT_Y + f * FRET_H;
+    const sw = f === 0 ? 3 : 1;
+    const sc = f === 0 ? '#c8923a' : '#2e2e2e';
+    html += `<line x1="${STRING_X[0]-10}" y1="${y}" x2="${STRING_X[5]+10}" y2="${y}" stroke="${sc}" stroke-width="${sw}"/>`;
+  }
+  // Strings
+  const strW = [2.5, 2, 1.5, 1.2, 1, 0.8];
+  STRING_X.forEach((x, i) => {
+    html += `<line x1="${x}" y1="${NUT_Y}" x2="${x}" y2="${NUT_Y + numFrets * FRET_H}" stroke="#3a3a3a" stroke-width="${strW[i]}"/>`;
+  });
+  // Fret numbers
+  for (let f = 0; f < numFrets; f++) {
+    const fNum = fretStart + f + 1;
+    const y = NUT_Y + f * FRET_H + FRET_H / 2;
+    html += `<text x="8" y="${y+4}" font-size="10" fill="#555" font-family="IBM Plex Mono,monospace" text-anchor="middle">${fNum}</text>`;
+  }
+  // String labels
+  const labels = ['E','A','D','G','B','e'];
+  STRING_X.forEach((x, i) => {
+    html += `<text x="${x}" y="${NUT_Y - 8}" font-size="10" fill="#555" font-family="IBM Plex Mono,monospace" text-anchor="middle">${labels[i]}</text>`;
+  });
+  // Notes
+  notes.forEach(n => {
+    const x = STRING_X[n.s];
+    const y = NUT_Y + (n.f - fretStart - 1) * FRET_H + FRET_H / 2;
+    const isRoot = n.root;
+    const fill = isRoot ? '#c8763a' : n.color || '#534AB7';
+    const stroke = isRoot ? '#e8a060' : n.stroke || '#9a8fd0';
+    const sw = n.shared ? 2.5 : 1.5;
+    html += `<circle cx="${x}" cy="${y}" r="13" fill="${fill}" stroke="${stroke}" stroke-width="${sw}" style="cursor:pointer" onclick="fbTap('${infoId}','${n.note}','${n.role}','${(n.desc||'').replace(/'/g,'&#39;')}')"/>`;
+    html += `<text x="${x}" y="${y+4}" font-size="11" fill="#f0ece4" font-family="IBM Plex Mono,monospace" text-anchor="middle" pointer-events="none">${n.note}</text>`;
+  });
+  svgEl.innerHTML = html;
+}
+
+function fbTap(infoId, note, role, desc) {
+  const el = document.getElementById(infoId);
+  if (el) el.innerHTML = `<strong>${note} — ${role}</strong><br>${desc}`;
+}
+
+// ── BOX 1 ──
+function initBox1() {
+  const el = document.getElementById('fb-box1');
+  if (!el || el.querySelector('svg')) return;
+  const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+  el.appendChild(svg);
+  const notes = [
+    {s:0,f:5,note:'A',role:'Root',root:true,desc:'Low E, fret 5. Box 1 begins here. Start and end phrases on this note.'},
+    {s:0,f:8,note:'C',role:'Minor 3rd',desc:'Low E, fret 8. The b3 — gives the scale its dark, bluesy quality.'},
+    {s:1,f:5,note:'D',role:'4th',desc:'A string, fret 5. Strong, stable tone.'},
+    {s:1,f:7,note:'E',role:'5th',desc:'A string, fret 7. One of the most consonant tones over a minor chord.'},
+    {s:2,f:5,note:'G',role:'Minor 7th',desc:'D string, fret 5. The b7 — essential to the bluesy unresolved feel.'},
+    {s:2,f:7,note:'A',role:'Root',root:true,desc:'D string, fret 7. Root again. Great mid-neck anchor for phrases.'},
+    {s:3,f:5,note:'C',role:'Minor 3rd',desc:'G string, fret 5. Great string to bend for the classic blues cry.'},
+    {s:3,f:7,note:'D',role:'4th',desc:'G string, fret 7. Pairs nicely with root on D string as a two-note lick.'},
+    {s:4,f:5,note:'E',role:'5th',desc:'B string, fret 5. Strong resolution note for ending phrases.'},
+    {s:4,f:8,note:'G',role:'Minor 7th',desc:'B string, fret 8. Bending up a half step gives a classic blues lick.'},
+    {s:5,f:5,note:'A',role:'Root',root:true,desc:'High e, fret 5. Mirror of low E string. Box is complete.'},
+    {s:5,f:8,note:'C',role:'Minor 3rd',desc:'High e, fret 8. Great for high bends and vibrato.'},
+  ];
+  drawFretboard(svg, 3, 9, notes, null, 'fb-box1-info');
+}
+
+// ── BOXES 1+2 ──
+let boxView = 'both';
+function initBoxes() {
+  const el = document.getElementById('fb-boxes');
+  if (!el) return;
+  const svg = el.querySelector('svg') || document.createElementNS('http://www.w3.org/2000/svg','svg');
+  if (!el.querySelector('svg')) el.appendChild(svg);
+  renderBoxes(svg);
+}
+function renderBoxes(svg) {
+  const b1notes = [
+    {s:0,f:5,note:'A',role:'Root — Box 1',root:true,color:'#3C3489',stroke:'#9a8fd0',desc:'Low E, fret 5. Box 1 root.'},
+    {s:0,f:8,note:'C',role:'Minor 3rd — shared',color:'#3C3489',stroke:'#9a8fd0',shared:true,desc:'Low E, fret 8. Shared with Box 2 — your bridge to shift up.'},
+    {s:1,f:5,note:'D',role:'4th — Box 1',color:'#534AB7',stroke:'#9a8fd0',desc:'A string, fret 5.'},
+    {s:1,f:7,note:'E',role:'5th — shared',color:'#534AB7',stroke:'#9a8fd0',shared:true,desc:'A string, fret 7. Shared note — great to slide from Box 1 into Box 2.'},
+    {s:2,f:5,note:'G',role:'b7 — Box 1',color:'#534AB7',stroke:'#9a8fd0',desc:'D string, fret 5.'},
+    {s:2,f:7,note:'A',role:'Root — shared',root:true,color:'#3C3489',stroke:'#9a8fd0',shared:true,desc:'D string, fret 7. Root shared between boxes.'},
+    {s:3,f:5,note:'C',role:'b3 — Box 1',color:'#534AB7',stroke:'#9a8fd0',desc:'G string, fret 5.'},
+    {s:3,f:7,note:'D',role:'4th — shared',color:'#534AB7',stroke:'#9a8fd0',shared:true,desc:'G string, fret 7. Shared — play with pinky (Box 1) or index (Box 2).'},
+    {s:4,f:5,note:'E',role:'5th — Box 1',color:'#534AB7',stroke:'#9a8fd0',desc:'B string, fret 5.'},
+    {s:4,f:8,note:'G',role:'b7 — shared',color:'#534AB7',stroke:'#9a8fd0',shared:true,desc:'B string, fret 8. Bend and cross into Box 2 phrasing from here.'},
+    {s:5,f:5,note:'A',role:'Root — Box 1',root:true,color:'#3C3489',stroke:'#9a8fd0',desc:'High e, fret 5. Mirror of low E.'},
+    {s:5,f:8,note:'C',role:'b3 — shared',color:'#3C3489',stroke:'#9a8fd0',shared:true,desc:'High e, fret 8. Shared with Box 2.'},
+  ];
+  const b2notes = [
+    {s:0,f:10,note:'D',role:'4th — Box 2',color:'#085041',stroke:'#5DCAA5',desc:'Low E, fret 10. New note in Box 2.'},
+    {s:1,f:10,note:'G',role:'b7 — Box 2',color:'#085041',stroke:'#5DCAA5',desc:'A string, fret 10.'},
+    {s:2,f:10,note:'C',role:'b3 — Box 2',color:'#085041',stroke:'#5DCAA5',desc:'D string, fret 10.'},
+    {s:3,f:9,note:'E',role:'5th — Box 2',color:'#085041',stroke:'#5DCAA5',desc:'G string, fret 9.'},
+    {s:4,f:10,note:'A',role:'Root — Box 2',root:false,color:'#0F6E56',stroke:'#5DCAA5',desc:'B string, fret 10. Root in Box 2 — anchor phrases here.'},
+    {s:5,f:10,note:'D',role:'4th — Box 2',color:'#085041',stroke:'#5DCAA5',desc:'High e, fret 10. Mirror of low E in Box 2.'},
+  ];
+  let visible = [];
+  if (boxView === 'both' || boxView === 'box1') visible = visible.concat(b1notes);
+  if (boxView === 'both' || boxView === 'box2') visible = visible.concat(b2notes);
+  drawFretboard(svg, 3, 11, visible, null, 'fb-boxes-info');
+}
+function showBoxView(mode, btn) {
+  boxView = mode;
+  document.querySelectorAll('#box-tabs .sc-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const svg = document.querySelector('#fb-boxes svg');
+  if (svg) renderBoxes(svg);
+  const msgs = {
+    both: 'Thick-bordered dots are shared notes at frets 7–8 — your bridges between boxes. Tap any dot.',
+    box1: 'Box 1 — frets 5–8. Index on fret 5, pinky on frets 7–8.',
+    box2: 'Box 2 — frets 7–10. Overlaps with Box 1 at the shared notes.'
+  };
+  document.getElementById('fb-boxes-info').innerHTML = msgs[mode];
+}
+
+// ── MAJOR PENTATONIC ──
+let majView = 'major';
+function initMajor() {
+  const el = document.getElementById('fb-major');
+  if (!el) return;
+  const svg = el.querySelector('svg') || document.createElementNS('http://www.w3.org/2000/svg','svg');
+  if (!el.querySelector('svg')) el.appendChild(svg);
+  renderMajor(svg);
+}
+function renderMajor(svg) {
+  const majNotes = [
+    {s:0,f:2,note:'F#',role:'Major 6th — Major',color:'#185FA5',stroke:'#7ab8e8',desc:'Low E, fret 2. Bright 6th — characteristically major-sounding.'},
+    {s:0,f:5,note:'A',role:'Root — shared',root:true,color:'#0C447C',stroke:'#7ab8e8',shared:true,desc:'Low E, fret 5. Root — also where A minor Box 1 begins.'},
+    {s:1,f:2,note:'B',role:'Major 2nd — Major',color:'#185FA5',stroke:'#7ab8e8',desc:'A string, fret 2. Open, airy quality unique to major pentatonic.'},
+    {s:1,f:4,note:'C#',role:'Major 3rd — Major',color:'#185FA5',stroke:'#7ab8e8',desc:'A string, fret 4. The defining note — makes this scale sound happy and resolved.'},
+    {s:2,f:2,note:'E',role:'5th — Major',color:'#185FA5',stroke:'#7ab8e8',desc:'D string, fret 2. The 5th — stable in both major and minor pentatonic.'},
+    {s:2,f:4,note:'F#',role:'Major 6th — Major',color:'#185FA5',stroke:'#7ab8e8',desc:'D string, fret 4. The 6th — bright, country/blues flavored.'},
+    {s:3,f:2,note:'A',role:'Root — Major',root:true,color:'#0C447C',stroke:'#7ab8e8',desc:'G string, fret 2. Root in the middle of the box.'},
+    {s:3,f:4,note:'B',role:'Major 2nd — Major',color:'#185FA5',stroke:'#7ab8e8',desc:'G string, fret 4. Great for country-style bends.'},
+    {s:4,f:2,note:'C#',role:'Major 3rd — Major',color:'#185FA5',stroke:'#7ab8e8',desc:'B string, fret 2. Bending from C to C# is a classic country lick.'},
+    {s:4,f:5,note:'E',role:'5th — shared',color:'#185FA5',stroke:'#7ab8e8',shared:true,desc:'B string, fret 5. The 5th, shared with A minor pentatonic.'},
+    {s:5,f:2,note:'F#',role:'Major 6th — Major',color:'#185FA5',stroke:'#7ab8e8',desc:'High e, fret 2. Mirror of low E.'},
+    {s:5,f:5,note:'A',role:'Root — shared',root:true,color:'#0C447C',stroke:'#7ab8e8',shared:true,desc:'High e, fret 5. Root, mirroring low E. Start of A minor Box 1 on this string too.'},
+  ];
+  const minNotes = [
+    {s:0,f:5,note:'A',role:'Root — shared',root:true,color:'#3C3489',stroke:'#9a8fd0',shared:true,desc:'Low E, fret 5. Root — shared with major.'},
+    {s:0,f:8,note:'C',role:'Minor 3rd — Minor',color:'#534AB7',stroke:'#9a8fd0',desc:'Low E, fret 8. The b3 — dark, bluesy.'},
+    {s:1,f:5,note:'D',role:'4th — Minor',color:'#534AB7',stroke:'#9a8fd0',desc:'A string, fret 5.'},
+    {s:1,f:7,note:'E',role:'5th — Minor',color:'#534AB7',stroke:'#9a8fd0',desc:'A string, fret 7.'},
+    {s:2,f:5,note:'G',role:'b7 — Minor',color:'#534AB7',stroke:'#9a8fd0',desc:'D string, fret 5.'},
+    {s:2,f:7,note:'A',role:'Root — Minor',root:true,color:'#3C3489',stroke:'#9a8fd0',desc:'D string, fret 7.'},
+    {s:3,f:5,note:'C',role:'b3 — Minor',color:'#534AB7',stroke:'#9a8fd0',desc:'G string, fret 5.'},
+    {s:3,f:7,note:'D',role:'4th — Minor',color:'#534AB7',stroke:'#9a8fd0',desc:'G string, fret 7.'},
+    {s:4,f:5,note:'E',role:'5th — shared',color:'#534AB7',stroke:'#9a8fd0',shared:true,desc:'B string, fret 5. Shared with major pentatonic.'},
+    {s:4,f:8,note:'G',role:'b7 — Minor',color:'#534AB7',stroke:'#9a8fd0',desc:'B string, fret 8.'},
+    {s:5,f:5,note:'A',role:'Root — shared',root:true,color:'#3C3489',stroke:'#9a8fd0',shared:true,desc:'High e, fret 5.'},
+    {s:5,f:8,note:'C',role:'b3 — Minor',color:'#534AB7',stroke:'#9a8fd0',desc:'High e, fret 8.'},
+  ];
+  let visible = [];
+  if (majView === 'major' || majView === 'both') visible = visible.concat(majNotes);
+  if (majView === 'minor' || majView === 'both') visible = visible.concat(minNotes);
+  // deduplicate shared at fret 5 when both shown
+  if (majView === 'both') {
+    const seen = {};
+    visible = visible.filter(n => {
+      const key = n.s + '-' + n.f;
+      if (seen[key]) return false;
+      seen[key] = true;
+      return true;
+    });
+  }
+  drawFretboard(svg, 0, 9, visible, null, 'fb-major-info');
+}
+function showMajView(mode, btn) {
+  majView = mode;
+  document.querySelectorAll('#maj-tabs .sc-btn').forEach(b => { b.classList.remove('active','active-blue'); });
+  btn.classList.add(mode === 'minor' ? 'active' : 'active-blue');
+  const svg = document.querySelector('#fb-major svg');
+  if (svg) renderMajor(svg);
+  const msgs = {
+    major: 'A Major Pentatonic (frets 2–5). Notes: A · B · C# · E · F# — bright, happy, resolved.',
+    minor: 'A Minor Pentatonic (frets 5–8). Notes: A · C · D · E · G — darker, tense, bluesy.',
+    both: 'Both scales compared. Shared notes (thick border) are common ground — use them to pivot between scales mid-solo.'
+  };
+  document.getElementById('fb-major-info').innerHTML = msgs[mode];
+}
+
+// ── CAGED ──
+let cagedView = 'all';
+function initCaged() {
+  const el = document.getElementById('fb-caged');
+  if (!el) return;
+  const svg = el.querySelector('svg') || document.createElementNS('http://www.w3.org/2000/svg','svg');
+  if (!el.querySelector('svg')) el.appendChild(svg);
+  renderCaged(svg);
+}
+function renderCaged(svg) {
+  const chordTones = [
+    {s:0,f:5,note:'A',role:'Root ★',color:'#27500A',stroke:'#8acc80',desc:'Low E, fret 5. Root of the chord. Part of the barre — index finger covers this.'},
+    {s:1,f:4,note:'C#',role:'Major 3rd ★',color:'#27500A',stroke:'#8acc80',desc:'A string, fret 4. The major 3rd — defines the bright quality. Land here for a resolved sound.'},
+    {s:1,f:7,note:'E',role:'5th ★',color:'#27500A',stroke:'#8acc80',desc:'A string, fret 7. The 5th — stable and consonant. Part of the barre chord.'},
+    {s:2,f:7,note:'A',role:'Root ★',color:'#27500A',stroke:'#8acc80',desc:'D string, fret 7. Root again. Part of the barre chord. Great mid-neck anchor.'},
+    {s:3,f:6,note:'C#',role:'Major 3rd ★',color:'#27500A',stroke:'#8acc80',desc:'G string, fret 6. Major 3rd — part of the barre shape. Bend to D for a classic major blues lick.'},
+    {s:4,f:5,note:'E',role:'5th ★',color:'#27500A',stroke:'#8acc80',desc:'B string, fret 5. The 5th — barre position. Strong resolution note.'},
+    {s:5,f:5,note:'A',role:'Root ★',color:'#27500A',stroke:'#8acc80',desc:'High e, fret 5. Root at the top — barre. Ending a phrase here sounds complete.'},
+  ];
+  const scaleTones = [
+    {s:0,f:4,note:'G#',role:'Major 7th',color:'var(--surface2)',stroke:'#5a9a50',desc:'Low E, fret 4. Leading tone — wants to resolve up to root A. Use as a passing note.'},
+    {s:0,f:7,note:'B',role:'Major 2nd',color:'var(--surface2)',stroke:'#5a9a50',desc:'Low E, fret 7. Bright, open tone. Great for melodic runs between root and 3rd.'},
+    {s:1,f:5,note:'D',role:'4th',color:'var(--surface2)',stroke:'#5a9a50',desc:'A string, fret 5. Slightly suspended — build tension before landing on the 3rd.'},
+    {s:2,f:4,note:'F#',role:'Major 6th',color:'var(--surface2)',stroke:'#5a9a50',desc:'D string, fret 4. Bright and characteristic of country and major blues phrasing.'},
+    {s:2,f:6,note:'G#',role:'Major 7th',color:'var(--surface2)',stroke:'#5a9a50',desc:'D string, fret 6. Leading tone. Sliding G# → A on the same string is a beautiful resolution.'},
+    {s:3,f:4,note:'B',role:'Major 2nd',color:'var(--surface2)',stroke:'#5a9a50',desc:'G string, fret 4. Flowing and melodic. Works in descending runs toward the root.'},
+    {s:4,f:7,note:'F#',role:'Major 6th',color:'var(--surface2)',stroke:'#5a9a50',desc:'B string, fret 7. The 6th — bright and sweet. Very characteristic of country and major blues.'},
+    {s:5,f:4,note:'G#',role:'Major 7th',color:'var(--surface2)',stroke:'#5a9a50',desc:'High e, fret 4. Leading tone at the top. Mirror of low E.'},
+    {s:5,f:7,note:'B',role:'Major 2nd',color:'var(--surface2)',stroke:'#5a9a50',desc:'High e, fret 7. Bright finishing note for phrases up the neck.'},
+  ];
+  let visible = [];
+  if (cagedView === 'all' || cagedView === 'chord') visible = visible.concat(chordTones);
+  if (cagedView === 'all' || cagedView === 'scale') visible = visible.concat(scaleTones);
+  drawFretboard(svg, 2, 8, visible, null, 'fb-caged-info');
+}
+function showCagedView(mode, btn) {
+  cagedView = mode;
+  document.querySelectorAll('#caged-tabs .sc-btn').forEach(b => { b.classList.remove('active','active-green'); });
+  btn.classList.add('active-green');
+  const svg = document.querySelector('#fb-caged svg');
+  if (svg) renderCaged(svg);
+  const msgs = {
+    all: 'Dark green = chord tones (root, 3rd, 5th) — your safe landing notes. Outlined = color tones that add texture.',
+    chord: 'Chord tones only — A, C#, E. These notes are inside the A major barre chord. Landing here always sounds intentional.',
+    scale: 'Color tones — B, D, F#, G#. Use these as passing notes between chord tones. They add movement and tension.'
+  };
+  document.getElementById('fb-caged-info').innerHTML = msgs[mode];
+}
+
+// ── CHORD DIAGRAM ──
+const SX = [28, 58, 88, 118, 148, 178];
+const NY = 50; const FH = 38;
+const fy = n => NY + n * FH - FH / 2;
+
+const CHORDS = {
+  A7: {
+    sub: 'I chord in key of A blues',
+    notes: [{l:'A',r:'root'},{l:'C#',r:'3rd'},{l:'E',r:'5th'},{l:'G',r:'b7'}],
+    muted:[0], open:[1,3,5],
+    dots:[{s:2,f:2,fn:'2',n:'E'},{s:4,f:2,fn:'3',n:'C#'}],
+    fingers:['Mute low E (thumb or edge of index)','② D string fret 2 — E (5th)','③ B string fret 2 — C# (major 3rd)','Open: A, G, high e strings — strum from A down'],
+    tip:'The open G string is the flat 7th — that\'s what makes it bluesy. Strum from A string down.'
+  },
+  D7: {
+    sub: 'IV chord in key of A blues',
+    notes: [{l:'D',r:'root'},{l:'F#',r:'3rd'},{l:'A',r:'5th'},{l:'C',r:'b7'}],
+    muted:[0,1], open:[2],
+    dots:[{s:3,f:2,fn:'2',n:'A'},{s:4,f:1,fn:'1',n:'C'},{s:5,f:2,fn:'3',n:'F#'}],
+    fingers:['Mute low E and A strings','① B string fret 1 — C (flat 7th)','② G string fret 2 — A (5th)','③ high e fret 2 — F# (3rd) — strum from D down'],
+    tip:'The C natural on B string (flat 7th) is what makes this bluesy. Strum from D string down.'
+  },
+  E7: {
+    sub: 'I chord in key of E / V chord in key of A',
+    notes: [{l:'E',r:'root'},{l:'G#',r:'3rd'},{l:'B',r:'5th'},{l:'D',r:'b7'}],
+    muted:[], open:[0,2,4,5],
+    dots:[{s:1,f:2,fn:'2',n:'B'},{s:3,f:1,fn:'1',n:'G#'}],
+    fingers:['① G string fret 1 — G# (major 3rd)','② A string fret 2 — B (5th)','Open: low E, D, B, high e — strum all 6 strings'],
+    tip:'Just E major with the 3rd finger removed. The open D string is the flat 7th. Easiest dominant 7th shape.'
+  },
+  G7: {
+    sub: 'V chord in key of C blues',
+    notes: [{l:'G',r:'root'},{l:'B',r:'3rd'},{l:'D',r:'5th'},{l:'F',r:'b7'}],
+    muted:[], open:[2,3,4],
+    dots:[{s:0,f:3,fn:'3',n:'G'},{s:1,f:2,fn:'2',n:'B'},{s:5,f:1,fn:'1',n:'F'}],
+    fingers:['① high e fret 1 — F (flat 7th)','② A string fret 2 — B (major 3rd)','③ low E fret 3 — G (root)','Open: D, G, B — strum all 6 strings'],
+    tip:'Open G major shape with the pinky on high e fret 1 to add the flat 7th (F). The F is the bluesy ingredient.'
+  },
+  B7: {
+    sub: 'V chord in key of E blues',
+    notes: [{l:'B',r:'root'},{l:'D#',r:'3rd'},{l:'F#',r:'5th'},{l:'A',r:'b7'}],
+    muted:[0], open:[4],
+    dots:[{s:1,f:2,fn:'2',n:'B'},{s:2,f:1,fn:'1',n:'D#'},{s:3,f:2,fn:'3',n:'A'},{s:5,f:2,fn:'4',n:'F#'}],
+    fingers:['Mute low E string','① D string fret 1 — D# (major 3rd)','② A string fret 2 — B (root)','③ G string fret 2 — A (flat 7th)','④ high e fret 2 — F# (5th) — strum from A down'],
+    tip:'Uses all four fingers — most complex shape. The A on G string (flat 7th) is the bluesy note. Strum from A down.'
+  }
+};
+
+function drawChord(svgId, chordName) {
+  const svg = document.getElementById(svgId);
+  if (!svg) return;
+  const c = CHORDS[chordName];
+  let html = '';
+  const numFrets = 5;
+  // Nut
+  html += `<line x1="${SX[0]-10}" y1="${NY}" x2="${SX[5]+10}" y2="${NY}" stroke="#c8923a" stroke-width="3"/>`;
+  // Fret lines
+  for (let f=1;f<=numFrets;f++) {
+    html += `<line x1="${SX[0]-10}" y1="${NY+f*FH}" x2="${SX[5]+10}" y2="${NY+f*FH}" stroke="#2e2e2e" stroke-width="1"/>`;
+  }
+  // Strings
+  const sw = [2.5,2,1.5,1.2,1,0.8];
+  SX.forEach((x,i) => { html += `<line x1="${x}" y1="${NY}" x2="${x}" y2="${NY+numFrets*FH}" stroke="#3a3a3a" stroke-width="${sw[i]}"/>`; });
+  // Open/muted
+  SX.forEach((x,i) => {
+    if (c.muted.includes(i)) {
+      html += `<text x="${x}" y="38" font-size="14" fill="#666" font-family="IBM Plex Mono,monospace" text-anchor="middle">×</text>`;
+    } else if (c.open.includes(i)) {
+      html += `<circle cx="${x}" cy="34" r="7" fill="none" stroke="#666" stroke-width="1.5"/>`;
+    }
+  });
+  // Dots
+  c.dots.forEach(d => {
+    const x = SX[d.s], y = fy(d.f);
+    html += `<circle cx="${x}" cy="${y}" r="13" fill="#c8763a"/>`;
+    html += `<text x="${x}" y="${y+4}" font-size="11" fill="#f0ece4" font-family="IBM Plex Mono,monospace" text-anchor="middle" font-weight="500">${d.fn}</text>`;
+  });
+  // Note names below
+  const noteMap = {
+    A7:['','A','','G','','E'], D7:['','','D','','',''], E7:['E','','D','','B','E'],
+    G7:['','','D','G','B',''], B7:['','','','','B','']
+  };
+  SX.forEach((x,i) => {
+    const dot = c.dots.find(d=>d.s===i);
+    const n = dot ? dot.n : (noteMap[chordName]?.[i]||'');
+    if (n) html += `<text x="${x}" y="${NY+numFrets*FH+18}" font-size="10" fill="#555" font-family="IBM Plex Mono,monospace" text-anchor="middle">${n}</text>`;
+  });
+  svg.innerHTML = html;
+}
+
+function renderChordDetails(nameId, subId, pillsId, fingersId, tipId, chordName) {
+  const c = CHORDS[chordName];
+  document.getElementById(nameId).textContent = chordName;
+  document.getElementById(subId).textContent = c.sub;
+  const pClass = {root:'np-root','3rd':'np-3rd','5th':'np-5th',b7:'np-b7'};
+  document.getElementById(pillsId).innerHTML = c.notes.map(n=>`<span class="note-pill ${pClass[n.r]}">${n.l} (${n.r})</span>`).join('');
+  document.getElementById(fingersId).innerHTML = c.fingers.map(f=>`<li>${f}</li>`).join('');
+  document.getElementById(tipId).innerHTML = `<strong>Blues use:</strong> ${c.tip}`;
+}
+
+function showEChord(name, btn) {
+  document.querySelectorAll('#e-chord-nav .chord-pill').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  drawChord('e-chord-svg', name);
+  renderChordDetails('e-chord-name','e-chord-sub','e-chord-pills','e-chord-fingers','e-chord-tip', name);
+}
+function showMainChord(name, btn) {
+  document.querySelectorAll('#chord-nav-main .chord-pill').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  drawChord('main-chord-svg', name);
+  renderChordDetails('main-chord-name','main-chord-sub','main-chord-pills','main-chord-fingers','main-chord-tip', name);
+}
+
+// ── BLUES GRID ──
+const bluesKeys = { A:{I:'A7',IV:'D7',V:'E7'}, E:{I:'E7',IV:'A7',V:'B7'} };
+const bluesPatterns = {
+  standard:   ['I','I','I','I','IV','IV','I','I','V','IV','I','I'],
+  quick:      ['I','IV','I','I','IV','IV','I','I','V','IV','I','I'],
+  turnaround: ['I','I','I','I','IV','IV','I','I','V','IV','I','V']
+};
+const barNotes = {
+  standard: ['Start here every time. Feel the home chord.','Stay on I. Build the groove.','Still on I — 4 bars total to establish the feel.','Last bar of I before the change.','The IV chord arrives — feel the lift.','Second bar of IV.','Back to I — a small exhale.','Last I before the tension builds.','The V chord — maximum tension. Everything leans forward.','Back to IV — slight release.','Home again on I.','Final bar — sets up the loop back to bar 1.'],
+  quick: ['Start on I.','Quick change! IV in bar 2 — adds momentum early.','Back to I.','Last I before the main IV section.','IV for the main subdominant section.','Second bar of IV.','Back to I.','Last I before the V.','V chord — peak tension.','IV — releasing.','Home on I.','Sets up the repeat.'],
+  turnaround: ['Start on I.','Stay on I.','Still on I.','Last I before the IV.','IV arrives.','Second bar of IV.','Back to I.','Last I before the V.','V chord — tension peaks.','IV — partial release.','I — almost home.','Turnaround! V chord kicks you back into bar 1 with energy.']
+};
+const degreeRoles = {
+  I: {label:'I — tonic', desc:'Home base. Stable and grounded. The chord everything resolves to.'},
+  IV:{label:'IV — subdominant', desc:'Creates lift and movement away from home. Adds color and anticipation.'},
+  V: {label:'V — dominant', desc:'Maximum tension. Strongly wants to resolve back to the I chord.'}
+};
+
+let bluesKey = 'A', bluesVar = 'standard';
+
+function initBluesGrid(gridId, infoId) {
+  renderBluesGrid(gridId, infoId, bluesKey, bluesVar);
+}
+
+function renderBluesGrid(gridId, infoId, key, variant) {
+  const grid = document.getElementById(gridId);
+  if (!grid) return;
+  const pattern = bluesPatterns[variant];
+  const notes = barNotes[variant];
+  const k = bluesKeys[key];
+  grid.innerHTML = '';
+  pattern.forEach((deg, i) => {
+    const cell = document.createElement('div');
+    cell.className = `bar-cell bar-${deg}`;
+    cell.innerHTML = `<span class="bar-num-label">${i+1}</span><span class="bar-chord">${k[deg]}</span><span class="bar-degree">${deg}</span>`;
+    cell.onclick = () => {
+      document.querySelectorAll(`#${gridId} .bar-cell`).forEach(c=>c.classList.remove('active-bar'));
+      cell.classList.add('active-bar');
+      document.getElementById(infoId).innerHTML = `<strong>Bar ${i+1} — ${k[deg]} (${degreeRoles[deg].label})</strong><br>${degreeRoles[deg].desc} ${notes[i]}`;
+    };
+    grid.appendChild(cell);
+  });
+}
+
+function setBluesKey(key, btn) {
+  bluesKey = key;
+  document.querySelectorAll('.kv-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderBluesGrid('blues-grid-main','blues-info-main', bluesKey, bluesVar);
+  document.getElementById('blues-info-main').innerHTML = `<strong>Key of ${key}</strong> — Chords: I=${bluesKeys[key].I}, IV=${bluesKeys[key].IV}, V=${bluesKeys[key].V}. Tap any bar to explore.`;
+}
+
+function setBluesVar(variant, btn) {
+  bluesVar = variant;
+  // Only update the var buttons (second group)
+  document.querySelectorAll('.kv-btn').forEach(b => {
+    const oc = b.getAttribute('onclick')||'';
+    if (oc.includes('setBluesVar')) b.classList.remove('active');
+  });
+  btn.classList.add('active');
+  renderBluesGrid('blues-grid-main','blues-info-main', bluesKey, bluesVar);
+  const msgs = {
+    standard:'Standard 12-bar: four bars of I, two IV, two I, one V, one IV, two I.',
+    quick:'Quick change: IV appears in bar 2, giving the progression more early momentum.',
+    turnaround:'Turnaround: bar 12 is V instead of I — launches you straight back into bar 1.'
+  };
+  document.getElementById('blues-info-main').innerHTML = msgs[variant];
+}
+
+// ── QC GRID ──
+let qcVar = 'standard';
+function initQCGrid() {
+  renderBluesGrid('blues-grid-qc','blues-info-qc','A', qcVar);
+  document.getElementById('blues-info-qc').innerHTML = 'Standard 12-bar. Select a variation above to see the differences.';
+}
+function showQCVar(v) {
+  qcVar = v;
+  document.querySelectorAll('#page-s3-5 .sc-btn').forEach(b=>b.classList.remove('active'));
+  const btns = document.querySelectorAll('#page-s3-5 .sc-btn');
+  const idx = {standard:0,quick:1,turnaround:2};
+  if(btns[idx[v]]) btns[idx[v]].classList.add('active');
+  renderBluesGrid('blues-grid-qc','blues-info-qc','A', v);
+  const msgs = {
+    standard:'Standard 12-bar — I I I I / IV IV I I / V IV I I',
+    quick:'Quick change — IV appears in bar 2 instead of staying on I.',
+    turnaround:'Turnaround — bar 12 is V (E7) instead of I (A7), launching back to bar 1.'
+  };
+  document.getElementById('blues-info-qc').innerHTML = msgs[v];
+}
+
+// ── MINOR BLUES GRID ──
+function initMinorBlues() {
+  const grid = document.getElementById('blues-grid-minor');
+  if (!grid || grid.innerHTML) return;
+  const pattern = ['Im','Im','Im','Im','IVm','IVm','Im','Im','Vm','IVm','Im','Im'];
+  const chords = {Im:'Am7',IVm:'Dm7',Vm:'Em7'};
+  const degClass = {Im:'I',IVm:'IV',Vm:'V'};
+  pattern.forEach((deg,i) => {
+    const cell = document.createElement('div');
+    cell.className = `bar-cell bar-${degClass[deg]}`;
+    cell.innerHTML = `<span class="bar-num-label">${i+1}</span><span class="bar-chord" style="font-size:14px">${chords[deg]}</span><span class="bar-degree">${deg.replace('m','m')}</span>`;
+    grid.appendChild(cell);
+  });
+}
+
+// ── TECH TABS ──
+function showTech(id, btn) {
+  ['hammer','pull','slide'].forEach(t => {
+    const el = document.getElementById('tech-'+t);
+    if(el) el.style.display = t===id ? 'block' : 'none';
+  });
+  document.querySelectorAll('#tech-tabs .sc-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+// ── INIT ──
+initBox1();
+initBluesGrid('blues-grid-main','blues-info-main');
+</script>
+</body>
+</html>
